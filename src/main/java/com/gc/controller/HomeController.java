@@ -3,13 +3,18 @@ package com.gc.controller;
 import com.gc.dao.*;
 import com.gc.factory.DaoFactory;
 import com.gc.models.*;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 
 /**
@@ -31,47 +36,102 @@ public class HomeController {
 
     private UsersEntity loggedInUser;
 
+    /**
+     * @param model
+     * @param request
+     * @return
+     */
     @RequestMapping("/home") // this page shows the challenges for each language
     //the String method returns the jsp page that we want to show
     //also redirects to the home page after loggin in with slack
-    public ModelAndView home(Model model, HttpServletResponse response) {
-        LanguagesDAO languagesDAO = DaoFactory.getLanguagesDaoInstance(DaoFactory.LANGUAGES_HIBERNATE_DAO);
+    public ModelAndView home(Model model, HttpServletRequest request) {
+        Cookie[] cookie = request.getCookies();
+        String cookienamestring = "";
+        for (int i = 0; i < cookie.length; i++) {
+            Cookie cookiename = cookie[i];
+            cookienamestring = cookiename.getName();
+            if (cookienamestring.equals("userIdCookie")) {
+                LanguagesDAO languagesDAO = DaoFactory.getLanguagesDaoInstance(DaoFactory.LANGUAGES_HIBERNATE_DAO);
+                ArrayList<LanguagesEntity> languageList = languagesDAO.getAllLanguages();
+                return new
+                        ModelAndView("home", "lList", languageList);
+            }
 
-        ArrayList<LanguagesEntity> languageList = languagesDAO.getAllLanguages();
-
-        return new
-                ModelAndView("home", "lList", languageList);
+        }
+        return new ModelAndView("login", "", "");
     }
 
+    /**
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/login")
+    public String login(Model model) {
+
+        model.addAttribute("button", "Sign in with Slack");
+        model.addAttribute("isLogin", false);
+        model.addAttribute("msg", message);
+        return "login";
+    }
+
+
+    private UsersEntity loginUser;
+
+    private String message;
+
+    /**
+     * @param userName
+     * @param password
+     * @param model
+     * @param request
+     * @param response
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/loginUser")
+    public String loginUser(@RequestParam("userName") String userName, @RequestParam("password") String password, Model model, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        if (validUserAndPass(userName, password) != null) {
+            loginUser = validUserAndPass(userName, password);
+            int userId = loginUser.getUserId();
+            Cookie userCookie = new Cookie("userIdCookie", (Integer.toString(userId)));
+            Cookie userNameCookie = new Cookie("userNameCookie", userName);
+            userCookie.setMaxAge(60 * 60 * 24);
+            userNameCookie.setMaxAge(60 * 60 * 24);
+            response.addCookie(userCookie);
+            response.addCookie(userNameCookie);
+            return "loginsuccess";
+        } else {
+            message = "Incorrect username or password";
+            return "redirect:login";
+        }
+    }
+
+    /**
+     * @param userName
+     * @param password
+     * @return
+     */
+    private UsersEntity validUserAndPass(String userName, String password) {
+        UserDAO userDAO = DaoFactory.getUserDaoInstance(DaoFactory.USERS_HIBERNATE_DAO);
+
+        return userDAO.getUser(userName, password);
+    }
+
+    /**
+     * @return
+     */
     @RequestMapping("/loginsuccess")
     //the String method returns the jsp page that we want to show
-    public String loginsuccess(@RequestParam("username") String username,
-                               @RequestParam("password") String password,
-                               Model model) {
-
-
-        model.addAttribute("username", username);
-        model.addAttribute("password", password);
+    public String loginsuccess() {
 
         return "loginsuccess";
         //if else statement
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView login() {
-        return new ModelAndView("login", "command", new UsersEntity());
-    }
-
-
-    @RequestMapping(value = "/loginUser", method = RequestMethod.POST)
-    public ModelAndView loginUser(UsersEntity user, Model model) {
-
-        //System.out.println(user);
-        user.setPassword(user.getPassword());
-        loggedInUser = UserDAOImpl.getUser(user.getUserName(), user.getPassword());
-        return new ModelAndView("loginsuccess", "command", loggedInUser);
-    }
-
+    /**
+     * @param model
+     * @return
+     */
     @RequestMapping("/registration")
     //the String method returns the jsp page that we want to show
     public ModelAndView registration(Model model) {
@@ -79,8 +139,13 @@ public class HomeController {
         return new ModelAndView("registration", "command", new UsersEntity());
     }
 
+    /**
+     * @param newUser
+     * @param model
+     * @return
+     */
     @RequestMapping("/create-profile")
-    public String registration(@ModelAttribute UsersEntity newUser, Model model){
+    public String registration(@ModelAttribute UsersEntity newUser, Model model) {
         UserDAO userdao = DaoFactory.getUserDaoInstance(DaoFactory.USERS_HIBERNATE_DAO);
 
         Integer userIDforWallet = userdao.save(newUser);
@@ -97,6 +162,52 @@ public class HomeController {
         model.addAttribute("walletValue", newWallet.getWalletValue());
 
         return "registrationsuccess";
+    }
+
+    /**
+     * @param username
+     * @param password
+     * @param model
+     * @return
+     */
+    @RequestMapping("/loginUserTEST")
+    //the String method returns the jsp page that we want to show
+    public String loginUserTEST(@RequestParam("username") String username,
+                                @RequestParam("password") String password,
+                                Model model) {
+
+
+        model.addAttribute("username", username);
+        model.addAttribute("password", password);
+
+        return "loginsuccess";
+        //if else statement
+    }
+
+    /**
+     * @param response
+     * @return
+     */
+    @RequestMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        Cookie userCookie = new Cookie("userIdCookie", "");
+        userCookie.setMaxAge(0);
+        response.addCookie(userCookie);
+        Cookie userCookie2 = new Cookie("cookieToken", "");
+        userCookie2.setMaxAge(0);
+        response.addCookie(userCookie2);
+        Cookie userCookie3 = new Cookie("userNameCookie", "");
+        userCookie3.setMaxAge(0);
+        response.addCookie(userCookie3);
+        return "logout";
+    }
+
+    /**
+     * @return
+     */
+    @RequestMapping("/pleaselogin")
+    public String pleaselogin() {
+        return "pleaselogin";
     }
 
 }

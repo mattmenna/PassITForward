@@ -1,5 +1,6 @@
 package com.gc.controller;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,7 +15,10 @@ import java.net.URL;
  * Created by fhani on 8/8/2017.
  */
 public class OAuthMethods {
-
+    /**
+     * @param code
+     * @return
+     */
     public static String getOAuthToken(String code) {
         //TODO always delete before a push
         String clientId = "223829578051.223904316370";
@@ -43,6 +47,10 @@ public class OAuthMethods {
         return accessToken;
     }
 
+    /**
+     * @param token
+     * @return
+     */
     public static String getUserID(String token) {
         //String token = "cookieToken";
         String userID = "";
@@ -70,36 +78,112 @@ public class OAuthMethods {
         return userID;
     }
 
-
-    public static void sendPrivateMessage(String slackmessage, String token,String channel) {
-        //String channel = "mattmenna";
-//        String token = "cookieToken";
-        //String slackmessage = "this is a test for private message";
-        String asUser = getUserID(token);
-
-        try {
-            URL url = new URL("https://slack.com/api/chat.postMessage?token=" + token+
-                    "channel=40%" + channel + "&text=" + slackmessage + "as_user=" + asUser);
-            url.openStream();
-
-//            System.out.println(url);
+//    public static String getChannelId (String token) {
+//        String channelId = "";
+//
+//        try {
+//            URL url = new URL("https://slack.com/api/im.list?token=" + token);
+//
 //            BufferedReader reader;
 //            String jsonStr = "";
-//
 //            reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+//
 //            for (String line; (line = reader.readLine()) != null; ) {
 //                jsonStr += line;
 //            }
+//            //System.out.println("We made it this far at least");
 //            JSONObject json = new JSONObject(jsonStr);
-//            slackmessage = json.getJSONObject("message").getString("text");
-//            System.out.println(slackmessage);
+//            channelId = json.getJSONObject("ims").get("id").toString();
+//
+//            System.out.println(channelId);
+//
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return channelId;
+//    }
+
+    /**
+     * @param token
+     * @param userNameChannel
+     * @return
+     */
+    public static String getChannelId2(String token, String userNameChannel) {
+        String channelId = "";
+
+
+        try {
+            URL url = new URL("https://slack.com/api/users.list?token=" + token);
+
+            BufferedReader reader;
+            String jsonStr = "";
+            reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+
+            for (String line; (line = reader.readLine()) != null; ) {
+                jsonStr += line;
+            }
+            System.out.println("We made it this far at least 2");
+            JSONObject json = new JSONObject(jsonStr);
+            System.out.println(json);
+
+
+            JSONArray jsonArray = json.getJSONArray("members");
+            String name = jsonArray.getJSONObject(0).get("name").toString();
+            System.out.println(name);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                if (jsonArray.getJSONObject(i).get("name").toString().equalsIgnoreCase(userNameChannel)) {
+                    channelId = jsonArray.getJSONObject(i).get("id").toString();
+                    // break;
+                }
+            }
+
+
+            System.out.println(channelId);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return channelId;
+    }
+
+    /**
+     * @param token
+     * @param slackmessage
+     * @param channel
+     * @param userId
+     */
+    public static void sendPrivateMessage(String token, String slackmessage, String channel, String userId) {
+
+
+        try {
+            URL url = new URL("https://slack.com/api/chat.postMessage?token=" + token +
+                    "&channel=" + channel + "&text=" + slackmessage + "&as_user=" + userId);
+            url.openStream();
 
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

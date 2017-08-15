@@ -9,15 +9,15 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.ui.Model;
-
 import java.util.ArrayList;
 
-/**
- * Created by angelo on 8/10/17.
- */
+
 
 public class PostsDAOImpl implements PostsDAO {
-
+    /**
+     *
+     * @param newPost
+     */
     public void save(PostsEntity newPost) {
         Session s = getSession();
         Transaction tx = s.beginTransaction();
@@ -26,6 +26,12 @@ public class PostsDAOImpl implements PostsDAO {
         s.close();
     }
 
+    /**
+     *
+     * @param model
+     * @param languageId
+     * @return
+     */
     public ArrayList<PostsEntity> getAllPosts(Model model, int languageId) {
 
         Session s = getSession();
@@ -42,6 +48,11 @@ public class PostsDAOImpl implements PostsDAO {
         return (ArrayList<PostsEntity>) p.list();
 
     }
+
+    /**
+     *
+     * @return
+     */
     public ArrayList<PostsEntity> getAllPosts() {
         Session s = getSession();
         //Transaction tx = s.beginTransaction();
@@ -50,6 +61,24 @@ public class PostsDAOImpl implements PostsDAO {
         return (ArrayList<PostsEntity>) p.list();
     }
 
+    /**
+     *
+     * @param userId
+     * @return
+     */
+    public ArrayList<PostsEntity> getUserPosts(int userId) {
+        Session s = getSession();
+        Transaction tx = s.beginTransaction();
+        Criteria p = s.createCriteria(PostsEntity.class);
+        p.add(Restrictions.like("userId", userId));
+
+        return (ArrayList<PostsEntity>) p.list();
+    }
+
+    /**
+     *
+     * @param postID
+     */
     public void deletePost(int postID) {
         Session s = getSession();
         Transaction tx = s.beginTransaction();
@@ -59,6 +88,10 @@ public class PostsDAOImpl implements PostsDAO {
         s.close();
     }
 
+    /**
+     *
+     * @return
+     */
     private Session getSession() {
         Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
         SessionFactory sessionFact = cfg.buildSessionFactory();

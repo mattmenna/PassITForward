@@ -25,12 +25,16 @@
     <meta name="description" content="passItforward is the site to get your answers answered!">
     <meta name="author" content="">
 
-    <title>passITforward - Home</title>
+    <title>passITforward - REPLACE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</title>
 
     <link rel="icon" href="<c:url value="/resources/favicon.ico"/>"/>
     <link href="<c:url value="/resources/css/Footer-with-logo.css"/>" rel="stylesheet">
     <link rel="stylesheet" media="screen" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
     <link href="<c:url value="/resources/css/signin.css"/>" rel="stylesheet">
+
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
@@ -43,6 +47,7 @@
 </head>
 
 <body>
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -59,23 +64,25 @@
                 <li class="active"><a href="/home">Home</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/contact">Contact</a></li>
-                <%--<li><a href="/challenges">Challenges</a></li>--%>
             </ul>
+
         </div><!--/.nav-collapse -->
     </div>
-</nav>
-<span class="icon-bar"></span>
+</nav><span class="icon-bar"></span>
+<!--
+Place Code for body of page below-->
 
 
 <div class="container">
-
-    <form class="form-signin" method="post" action="/loginUser">
+    <form class="form-signin" method="post" action="loginUser">
+        <br>
+        <h3 class="text-danger">${msg}</h3>
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputUsername" class="sr-only">Username</label>
-        <input type="text" id="inputUsername" name="userName" class="form-control" placeholder="Username" required
+        <input type="text" id="inputUsername" name="userName" class="form-control" placeholder="Enter your Username" required
                autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Enter your Password" required>
         <div class="checkbox">
             <label>
                 <input type="checkbox" value="remember-me"> Remember me
@@ -88,9 +95,9 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
     </form>
     <br>
-    <a href="https://slack.com/oauth/authorize?&client_id=223829578051.223904316370&scope=chat:write:user,users.profile:read,incoming-webhook">slack</a>
 
 </div>
+
 
 <footer id="myFooter">
     <div class="container">
@@ -99,7 +106,7 @@
                 <h5>Get started</h5>
                 <ul>
                     <li><a href="/home">Home</a></li>
-                    <li><a href="/welcome">Sign in/up</a></li>
+                    <li><a href="/login">Sign in/up</a></li>
                 </ul>
             </div>
             <div class="col-sm-3">
@@ -110,15 +117,17 @@
             </div>
             <div class="col-sm-3 info">
                 <h5>Information</h5>
-                <p> Lorem ipsum dolor amet, consectetur adipiscing elit. Etiam consectetur aliquet aliquet. Interdum et malesuada fames ac ante ipsum primis in faucibus. </p>
+                <p> Lorem ipsum dolor amet, consectetur adipiscing elit. Etiam consectetur aliquet aliquet. Interdum et
+                    malesuada fames ac ante ipsum primis in faucibus. </p>
             </div>
         </div>
     </div>
     <div class="second-bar">
         <div class="container">
-            <h2 class="logo"><a href="/home"> passITforward </a></h2>
+            <h2 class="logo"><a href="/home">  </a></h2>
             <div class="social-icons">
-                <a href="https://www.facebook.com/"><i id="social-fb" class="fa fa-facebook-square fa-3x social"></i></a>
+                <a href="https://www.facebook.com/"><i id="social-fb"
+                                                       class="fa fa-facebook-square fa-3x social"></i></a>
                 <a href="https://twitter.com/"><i id="social-tw" class="fa fa-twitter-square fa-3x social"></i></a>
                 <a href="https://plus.google.com/"><i id="social-gp" class="fa fa-google-plus-square fa-3x social"></i></a>
                 <a href="mailto:passITforward"><i id="social-em" class="fa fa-envelope-square fa-3x social"></i></a>

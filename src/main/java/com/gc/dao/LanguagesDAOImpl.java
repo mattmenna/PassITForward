@@ -6,15 +6,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 
-/**
- * Created by angelo on 8/10/17.
- */
-public class LanguagesDAOImpl implements LanguagesDAO {
 
+public class LanguagesDAOImpl implements LanguagesDAO {
+    /**
+     * @return
+     */
     public ArrayList<LanguagesEntity> getAllLanguages() {
 
         Session s = getSession();
@@ -24,6 +23,9 @@ public class LanguagesDAOImpl implements LanguagesDAO {
         return (ArrayList<LanguagesEntity>) l.list();
     }
 
+    /**
+     * @param languageID
+     */
     public void deleteLanguage(int languageID) {
         Session s = getSession();
         Transaction tx = s.beginTransaction();
@@ -33,6 +35,9 @@ public class LanguagesDAOImpl implements LanguagesDAO {
         s.close();
     }
 
+    /**
+     * @return
+     */
     private Session getSession() {
         Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
         SessionFactory sessionFact = cfg.buildSessionFactory();

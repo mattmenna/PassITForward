@@ -13,8 +13,11 @@ import sun.security.tools.policytool.PolicyTool;
 
 import java.util.ArrayList;
 
-public class CommentsDAOImpl implements CommentsDAO {
 
+public class CommentsDAOImpl implements CommentsDAO {
+    /**
+     * @param newComments
+     */
     public void save(CommentsEntity newComments) {
         Session s = getSession();
         Transaction tx = s.beginTransaction();
@@ -23,6 +26,9 @@ public class CommentsDAOImpl implements CommentsDAO {
         s.close();
     }
 
+    /**
+     * @param userID
+     */
     public void deleteCommentsByUser(int userID) {
         Session s = getSession();
         Transaction tx = s.beginTransaction();
@@ -32,6 +38,9 @@ public class CommentsDAOImpl implements CommentsDAO {
         s.close();
     }
 
+    /**
+     * @param commentID
+     */
     public void deleteComment(int commentID) {
         Session s = getSession();
         Transaction tx = s.beginTransaction();
@@ -41,13 +50,21 @@ public class CommentsDAOImpl implements CommentsDAO {
         s.close();
     }
 
+    /**
+     * @return
+     */
     private Session getSession() {
         Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
         SessionFactory sessionFact = cfg.buildSessionFactory();
         return sessionFact.openSession();
     }
 
-    public ArrayList<CommentsEntity> getAllComments (Model model, int postId) {
+    /**
+     * @param model
+     * @param postId
+     * @return
+     */
+    public ArrayList<CommentsEntity> getAllComments(Model model, int postId) {
 
         Session s = getSession();
         Transaction tx = s.beginTransaction();
@@ -60,6 +77,21 @@ public class CommentsDAOImpl implements CommentsDAO {
         model.addAttribute("postId", temp.getPostId());
         model.addAttribute("postTitle", temp.getPostTitle());
         model.addAttribute("postDescription", temp.getPostDescription());
+
+        return (ArrayList<CommentsEntity>) c.list();
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    public ArrayList<CommentsEntity> getUserComments(int userId) {
+
+        Session s = getSession();
+        Transaction tx = s.beginTransaction();
+
+        Criteria c = s.createCriteria(CommentsEntity.class);
+        c.add(Restrictions.like("userId", userId));
 
         return (ArrayList<CommentsEntity>) c.list();
     }
